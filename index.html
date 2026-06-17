@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinTrack Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-info">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">$</span>
+        <span>FinTrack</span>
+      </a>
+      <h1>Personal financial help for income, expenses, lending, and borrowing.</h1>
+      <p>
+        Login as a user to add your money records, or login as admin to review the stored application data.
+      </p>
+      <div class="auth-highlights">
+        <span>Monthly tracking</span>
+        <span>Yearly reports</span>
+        <span>Local database</span>
+      </div>
+    </section>
+
+    <section class="auth-card">
+      <div class="tab-buttons" role="tablist" aria-label="Login type">
+        <button class="tab-button active" type="button" data-role="user">User Login</button>
+        <button class="tab-button" type="button" data-role="admin">Admin Login</button>
+      </div>
+
+      <form id="loginForm">
+        <input type="hidden" id="loginRole" value="user">
+        <label>
+          Username
+          <input type="text" id="username" autocomplete="username" placeholder="user" required>
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" autocomplete="current-password" placeholder="user123" required>
+        </label>
+        <div class="captcha-box">
+          <div>
+            <span>Security Number</span>
+            <strong id="captchaQuestion">00 + 00 = ?</strong>
+          </div>
+          <button class="icon-button" type="button" id="refreshCaptcha" aria-label="Refresh security number">R</button>
+        </div>
+        <label>
+          Enter Security Answer
+          <input type="number" id="captchaAnswer" placeholder="Type answer" required>
+        </label>
+        <p class="form-message" id="loginMessage"></p>
+        <button class="btn btn-primary full-width" type="submit">Login Securely</button>
+      </form>
+
+      <div class="demo-box">
+        <b>Demo accounts</b>
+        <span>User: user / user123</span>
+        <span>Admin: admin / admin123</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

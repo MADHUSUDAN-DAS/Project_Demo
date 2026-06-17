@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lending and Borrowing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="lendBorrow" data-protected="user">
+  <header class="app-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark">$</span><span>FinTrack</span></a>
+    <nav class="app-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="income.html">Income</a>
+      <a href="expenses.html">Expenses</a>
+      <a class="active" href="lending.html">Lending</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+    <button class="btn btn-secondary" id="logoutBtn" type="button">Logout</button>
+  </header>
+
+  <main class="app-shell two-column">
+    <section class="panel">
+      <span class="eyebrow">Loan ledger</span>
+      <h1>Add lent or borrowed money</h1>
+      <form class="data-form" data-record-form>
+        <label>Type
+          <select name="type" required>
+            <option value="lent">Money Lent</option>
+            <option value="borrowed">Money Borrowed</option>
+          </select>
+        </label>
+        <label>Person / Source<input name="title" type="text" placeholder="Name or source" required></label>
+        <label>Amount<input name="amount" type="number" min="1" placeholder="500" required></label>
+        <label>Month<input name="month" type="month" required></label>
+        <label>Note<textarea name="note" placeholder="Due date or repayment note"></textarea></label>
+        <button class="btn btn-primary" type="submit">Save Ledger Entry</button>
+      </form>
+    </section>
+    <section class="panel">
+      <h2>Lending and borrowing records</h2>
+      <div class="record-list" id="pageRecords"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

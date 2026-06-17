@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinTrack Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="dashboard" data-protected="user">
+  <header class="app-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark">$</span><span>FinTrack</span></a>
+    <nav class="app-nav">
+      <a class="active" href="dashboard.html">Dashboard</a>
+      <a href="income.html">Income</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="lending.html">Lending</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+    <button class="btn btn-secondary" id="logoutBtn" type="button">Logout</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="page-title">
+      <div>
+        <span class="eyebrow">User dashboard</span>
+        <h1>Your money overview</h1>
+      </div>
+      <a class="btn btn-primary" href="income.html">Add Record</a>
+    </section>
+
+    <section class="summary-grid dashboard-summary">
+      <article class="summary-card"><span>Total Income</span><strong id="totalIncome">$0</strong></article>
+      <article class="summary-card"><span>Total Expenses</span><strong id="totalExpense">$0</strong></article>
+      <article class="summary-card"><span>Money Lent</span><strong id="totalLent">$0</strong></article>
+      <article class="summary-card"><span>Money Borrowed</span><strong id="totalBorrowed">$0</strong></article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <h2>Current Balance</h2>
+        <strong class="big-number" id="netBalance">$0</strong>
+        <p class="muted">Calculated from income + borrowed money - expenses - lent money.</p>
+      </article>
+      <article class="panel">
+        <h2>Recent Records</h2>
+        <div class="record-list" id="recentRecords"></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

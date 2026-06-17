@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="admin" data-protected="admin">
+  <header class="app-header">
+    <a class="brand" href="admin.html"><span class="brand-mark">$</span><span>FinTrack Admin</span></a>
+    <nav class="app-nav">
+      <a class="active" href="admin.html">Admin Panel</a>
+    </nav>
+    <button class="btn btn-secondary" id="logoutBtn" type="button">Logout</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="page-title">
+      <div>
+        <span class="eyebrow">Admin access</span>
+        <h1>Application database view</h1>
+      </div>
+      <button class="btn btn-secondary" id="adminResetBtn" type="button">Reset Database</button>
+    </section>
+    <section class="summary-grid dashboard-summary">
+      <article class="summary-card"><span>Total Records</span><strong id="adminRecordCount">0</strong></article>
+      <article class="summary-card"><span>Income</span><strong id="adminIncome">$0</strong></article>
+      <article class="summary-card"><span>Expenses</span><strong id="adminExpense">$0</strong></article>
+      <article class="summary-card"><span>Net Balance</span><strong id="adminBalance">$0</strong></article>
+    </section>
+    <section class="panel">
+      <h2>All saved records</h2>
+      <div class="record-list" id="adminRecords"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

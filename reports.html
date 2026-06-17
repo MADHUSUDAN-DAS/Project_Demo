@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="reports" data-protected="user">
+  <header class="app-header">
+    <a class="brand" href="dashboard.html"><span class="brand-mark">$</span><span>FinTrack</span></a>
+    <nav class="app-nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="income.html">Income</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="lending.html">Lending</a>
+      <a class="active" href="reports.html">Reports</a>
+    </nav>
+    <button class="btn btn-secondary" id="logoutBtn" type="button">Logout</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="page-title">
+      <div>
+        <span class="eyebrow">Reports</span>
+        <h1>Monthly and yearly summary</h1>
+      </div>
+      <button class="btn btn-secondary" id="clearDataBtn" type="button">Clear My Data</button>
+    </section>
+    <section class="panel">
+      <h2>Yearly totals</h2>
+      <div class="report-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Income</th>
+              <th>Expenses</th>
+              <th>Lent</th>
+              <th>Borrowed</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="reportRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
