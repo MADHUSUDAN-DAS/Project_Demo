@@ -36,6 +36,15 @@ function money(value) {
   }).format(value || 0);
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function generateCaptcha() {
   const first = Math.floor(Math.random() * 40) + 10;
   const second = Math.floor(Math.random() * 40) + 10;
@@ -137,6 +146,7 @@ function netBalance(totals) {
 function renderRecords(containerId, records) {
   const container = document.querySelector(containerId);
   if (!container) return;
+  const canDelete = containerId === "#adminRecords" || containerId === "#pageRecords";
 
   if (!records.length) {
     container.innerHTML = '<div class="empty-state">No records saved yet.</div>';
@@ -144,17 +154,40 @@ function renderRecords(containerId, records) {
   }
 
   container.innerHTML = records.map(function (record) {
+    const category = record.category ? `Category: ${escapeHtml(record.category)} - ` : "";
+    const owner = record.user ? `User: ${escapeHtml(record.user)} - ` : "";
+
     return `
       <article class="record-item">
         <div>
-          <span class="record-type ${record.type}">${record.type}</span>
-          <b>${record.title}</b>
-          <small>${record.month}${record.note ? " - " + record.note : ""}</small>
+          <span class="record-type ${record.type}">${escapeHtml(record.type)}</span>
+          <b>${escapeHtml(record.title)}</b>
+          <small>${owner}${category}${escapeHtml(record.month)}${record.note ? " - " + escapeHtml(record.note) : ""}</small>
         </div>
-        <strong>${money(record.amount)}</strong>
+        <div class="record-actions">
+          <strong>${money(record.amount)}</strong>
+          ${canDelete ? `<button class="text-button danger" type="button" data-delete-record="${record.id}">Delete</button>` : ""}
+        </div>
       </article>
     `;
   }).join("");
+}
+
+function initRecordActions() {
+  document.addEventListener("click", function (event) {
+    const deleteButton = event.target.closest("[data-delete-record]");
+    if (!deleteButton) return;
+
+    const id = deleteButton.dataset.deleteRecord;
+    if (!confirm("Delete this saved record?")) return;
+
+    const database = readDB();
+    database.records = database.records.filter(function (record) {
+      return record.id !== id;
+    });
+    writeDB(database);
+    renderCurrentPage();
+  });
 }
 
 function initRecordForm() {
@@ -170,6 +203,7 @@ function initRecordForm() {
     event.preventDefault();
 
     const database = readDB();
+    const session = getSession();
     const formData = new FormData(form);
     const type = form.dataset.type || formData.get("type");
     const record = {
@@ -177,8 +211,10 @@ function initRecordForm() {
       type,
       title: formData.get("title").trim(),
       amount: Number(formData.get("amount")),
+      category: formData.get("category") || "",
       month: formData.get("month"),
       note: formData.get("note").trim(),
+      user: session ? session.username : "user",
       createdAt: new Date().toISOString()
     };
 
@@ -271,14 +307,110 @@ function initClearButtons() {
   }
 }
 
+function groupExpenseBy(records, key) {
+  return records
+    .filter(function (record) {
+      return record.type === "expense";
+    })
+    .reduce(function (groups, record) {
+      const groupName = record[key] || "Uncategorized";
+      groups[groupName] = (groups[groupName] || 0) + Number(record.amount);
+      return groups;
+    }, {});
+}
+
+function topEntry(groupedData) {
+  return Object.entries(groupedData).sort(function (first, second) {
+    return second[1] - first[1];
+  })[0];
+}
+
+function renderCategoryBreakdown(records) {
+  const container = document.querySelector("#adminCategoryBreakdown");
+  if (!container) return;
+
+  const expenses = records.filter(function (record) {
+    return record.type === "expense";
+  });
+  const totalExpense = expenses.reduce(function (sum, record) {
+    return sum + Number(record.amount);
+  }, 0);
+  const grouped = groupExpenseBy(records, "category");
+  const entries = Object.entries(grouped).sort(function (first, second) {
+    return second[1] - first[1];
+  });
+
+  if (!entries.length) {
+    container.innerHTML = '<div class="empty-state">No spending category data yet.</div>';
+    return;
+  }
+
+  container.innerHTML = entries.map(function (entry) {
+    const percent = totalExpense ? Math.round((entry[1] / totalExpense) * 100) : 0;
+    return `
+      <div class="analytics-item">
+        <div>
+          <b>${escapeHtml(entry[0])}</b>
+          <span>${percent}% of total spending</span>
+        </div>
+        <strong>${money(entry[1])}</strong>
+        <div class="mini-progress"><span style="width: ${percent}%"></span></div>
+      </div>
+    `;
+  }).join("");
+}
+
+function filteredAdminRecords(records) {
+  const searchInput = document.querySelector("#adminSearch");
+  const typeFilter = document.querySelector("#adminTypeFilter");
+  const monthFilter = document.querySelector("#adminMonthFilter");
+
+  const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+  const selectedType = typeFilter ? typeFilter.value : "all";
+  const selectedMonth = monthFilter ? monthFilter.value : "";
+
+  return records.filter(function (record) {
+    const matchesType = selectedType === "all" || record.type === selectedType;
+    const matchesMonth = !selectedMonth || record.month === selectedMonth;
+    const searchable = [
+      record.title,
+      record.note,
+      record.category,
+      record.month,
+      record.user,
+      record.type
+    ].join(" ").toLowerCase();
+
+    return matchesType && matchesMonth && searchable.includes(search);
+  });
+}
+
+function initAdminFilters() {
+  ["#adminSearch", "#adminTypeFilter", "#adminMonthFilter"].forEach(function (selector) {
+    const input = document.querySelector(selector);
+    if (input) input.addEventListener("input", renderCurrentPage);
+  });
+}
+
 function renderAdmin() {
   const records = readDB().records;
   const totals = recordTotals(records);
+  const expenses = records.filter(function (record) {
+    return record.type === "expense";
+  });
+  const categoryTop = topEntry(groupExpenseBy(records, "category"));
+  const monthTop = topEntry(groupExpenseBy(records, "month"));
+  const averageExpense = expenses.length ? totals.expense / expenses.length : 0;
+  const loanExposure = totals.lent + totals.borrowed;
   const values = {
     adminRecordCount: records.length,
     adminIncome: money(totals.income),
     adminExpense: money(totals.expense),
-    adminBalance: money(netBalance(totals))
+    adminTopCategory: categoryTop ? `${categoryTop[0]} ${money(categoryTop[1])}` : "No data",
+    adminBalance: money(netBalance(totals)),
+    adminAverageExpense: money(averageExpense),
+    adminTopMonth: monthTop ? `${monthTop[0]} ${money(monthTop[1])}` : "No data",
+    adminLoanExposure: money(loanExposure)
   };
 
   Object.keys(values).forEach(function (id) {
@@ -286,7 +418,8 @@ function renderAdmin() {
     if (element) element.textContent = values[id];
   });
 
-  renderRecords("#adminRecords", records);
+  renderCategoryBreakdown(records);
+  renderRecords("#adminRecords", filteredAdminRecords(records));
 }
 
 function renderCurrentPage() {
@@ -304,5 +437,7 @@ protectPage();
 initLogin();
 initLogout();
 initRecordForm();
+initRecordActions();
 initClearButtons();
+initAdminFilters();
 renderCurrentPage();

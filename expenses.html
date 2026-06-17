@@ -29,6 +29,18 @@
       <form class="data-form" data-record-form data-type="expense">
         <label>Title<input name="title" type="text" placeholder="Rent, food, travel" required></label>
         <label>Amount<input name="amount" type="number" min="1" placeholder="1500" required></label>
+        <label>Category
+          <select name="category" required>
+            <option value="Housing">Housing</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Bills">Bills</option>
+            <option value="Health">Health</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Education">Education</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
         <label>Month<input name="month" type="month" required></label>
         <label>Note<textarea name="note" placeholder="Optional note"></textarea></label>
         <button class="btn btn-primary" type="submit">Save Expense</button>
